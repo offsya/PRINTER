@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System;
+using System.IO;
 
 namespace TPExpCon
 {
@@ -21,14 +22,29 @@ namespace TPExpCon
 			} while (!Int32.TryParse(Console.ReadLine(), out key) || key < 1 || key > 2);
 			if(key == 1)
             {
-				String path;
-				Console.Write("Введите путь к файлу с кодами\n");
-				path = Console.ReadLine();
-				var codes = Codes.GetCodesFromFile(path);
-				List<string> list = codes.ToList();
-
-				Printer.PrintOneByOne(list, new Point(90, 150), new Point(180, 180));
-			}else if(key == 2)
+	            while (true)
+	            {
+		            String path;
+		            try
+		            {
+			            do
+			            {
+				            Console.Write("Введите путь к файлу с кодами\n");
+				            path = Console.ReadLine();
+				            if (path.Length == 0) Console.Write("Вы ничего не ввели\n");
+				            else break;
+			            } while (path.Length == 0);
+			            var codes = Codes.GetCodesFromFile(path);
+			            List<string> list = codes.ToList();
+			            Printer.PrintOneByOne(list, new Point(90, 150), new Point(180, 180));
+			            break;
+		            }
+		            catch (Exception e)
+		            {
+			            Console.WriteLine(e.Message);
+		            }
+	            }
+            }else if(key == 2)
             {
 				var codes = Codes.GetCodesFromDatabase();
 				List<string> list = codes.ToList();
