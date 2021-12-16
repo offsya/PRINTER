@@ -12,10 +12,6 @@ namespace TPExpCon
 			Console.Title = " ";
 			Console.BackgroundColor = ConsoleColor.White;
 			Console.Clear();
-
-			String path;
-			Console.Write("Введите путь к файлу с кодами\n");
-			path = Console.ReadLine();
 			Console.ForegroundColor = ConsoleColor.Black;
 			Console.BackgroundColor = ConsoleColor.White;
 			var codes = Codes.GetCodesFromDatabase();
