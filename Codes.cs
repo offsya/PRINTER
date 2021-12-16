@@ -29,16 +29,20 @@ namespace TPExpCon
 			var lines = new List<string>();
 			try
 			{
-				Console.WriteLine("Сколько кодов взять из файла?");
-				String buffer = Console.ReadLine();
-				try
+				while(true)
 				{
-					if (Int32.TryParse(buffer, out CodesChunkSize));
-					else throw new Exception("Некорректные данные");
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.Message);
+					Console.WriteLine("Сколько кодов взять из файла?");
+					String buffer = Console.ReadLine();
+					try
+					{
+						if (Int32.TryParse(buffer, out CodesChunkSize)) break;
+						else throw new Exception("Некорректные данные");
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine(e.Message);
+
+					}
 				}
 				using (var codesFileStreamReader = new StreamReader(codesFile))
 				{
@@ -52,25 +56,30 @@ namespace TPExpCon
 			}
 			catch (FileNotFoundException)
 			{
-				throw new FileNotFoundException("No such file with codes");
+				throw new Exception("Нету");
 			}
 			return lines;
 		}
 		
 		
 		public static IEnumerable<string> GetCodesFromDatabase()
+		
 		{
+			bool check = true;
 			var lines = new List<string>();
-			Console.WriteLine("Сколько кодов взять из базы данных?");
-			String buffer = Console.ReadLine();
-			try
+			while(true)
 			{
-				if (Int32.TryParse(buffer, out CodesChunkSize));
-				else throw new Exception("Некорректные данные");
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
+				Console.WriteLine("Сколько кодов взять из базы данных?");
+				String buffer = Console.ReadLine();
+				try
+				{
+					if (Int32.TryParse(buffer, out CodesChunkSize)) break;
+					else throw new Exception("Некорректные данные");
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.Message);
+				}
 			}
 			return new DatabaseHandler().getCodes();
 		}

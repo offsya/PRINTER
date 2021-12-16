@@ -35,59 +35,68 @@ public class DatabaseHandler
         databaseName = Console.ReadLine();
         Console.WriteLine("Введите имя таблицы, где хранятся коды");
         table = Console.ReadLine();
-        Console.WriteLine("Введите номер колонки с кодами (номер первой -> 0)");
-        String buffer = Console.ReadLine();
-        try
+        do
         {
-            if (Int32.TryParse(buffer, out column)) ;
-            else throw new Exception("Некорректные данные");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
+            Console.WriteLine("Введите номер колонки с кодами (номер первой -> 0)");
+            if(Int32.TryParse(Console.ReadLine(), out column)) break;
+            else Console.WriteLine("Некорректные данные");
+        } while (true);
     }
+
+
     public NpgsqlConnection connect()
     {
        getDatabaseData();
-        NpgsqlConnection connection = new NpgsqlConnection("Host="+serverName+";Username="+userName+";" +
+       NpgsqlConnection connection = new NpgsqlConnection("Host="+serverName+";Username="+userName+";" +
                                                            "Password="+password+";Database="+databaseName+"");
-        try
-        {
+       try
+       {
             connection.Open();
             if (connection.FullState == ConnectionState.Broken || connection.FullState == ConnectionState.Closed)
             {
                 throw new Exception("Ошибка подключения к базе данных");
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
-
-        return connection;
+       }
+       catch (Exception e)
+       {
+           throw new Exception("База данных не найдена или введены неправильные данные");
+       }
+       return connection;
     }
 
     public IEnumerable<string> getCodes()
     {
         int i = 0;
         var codes = new List<string>();
-        NpgsqlConnection obj = connect();
-        NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM " + table + ";",obj);
-        NpgsqlDataReader reader = command.ExecuteReader();
-        if(reader.HasRows)
+        while (true)
         {
-            while (reader.Read() && i < Codes.CodesChunkSize)
+            try
             {
-                codes.Add(reader.GetString(column));
-                i++;
+                NpgsqlConnection obj = connect();
+                NpgsqlCommand command = new NpgsqlCommand("SELECT * FROM " + table + ";",obj);
+                NpgsqlDataReader reader = command.ExecuteReader();
+                if(reader.HasRows)
+                {
+                    while (reader.Read() && i < Codes.CodesChunkSize)
+                    {
+                        codes.Add(reader.GetString(column));
+                        i++;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Нет кодов в базе данных");
+                }
+                break;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
-        else
-        {
-            Console.WriteLine("Нет кодов в базе данных");
-        }
         return codes;
+        
+        
     }
     
 }
